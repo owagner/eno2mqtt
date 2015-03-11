@@ -1,0 +1,12 @@
+#
+# The Device List file defines all devices with their Enocean ID, their type (Enocean Equipment Profile, EEP)
+# and a symbolic name to be used in the MQTT hierarchy.
+#
+# The ID is in hex notation
+# The EEP is specified in the format taken from Enocean's EEP PDF (https://www.enocean.com/en/knowledge-base/)
+# The symbolic name is up to the user. Note that depending on the profile, the symbolic name may be suffixed to
+#  form multiple different topics for different reading values 
+#
+# Example 1: A Hoppe window handle
+1825116  F6-10-00	Tür Küche
+	
