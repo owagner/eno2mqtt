@@ -1,0 +1,11 @@
+language: java
+before_deploy: gradle jar
+deploy:
+  provider: releases
+  api_key:
+    secure: D6U7I5LPH16TLKhIeKSpOmFCXf5PWDn187hLxx5hwJ2PNTfLZUYAzPg8l0y67ZwpdO7E5fwpvom+GfxaBu3bCRq7bMfyMjqIp80bHyrUyROr4Fag+yB9mY5YCReVJ1k4RSwu1Bug8orf1OyVU7EUmejCrJt3nHo534Bm4bNEU7s=
+  file: "build/libs/eno2mqtt.jar"
+  on:
+    repo: owagner/eno2mqtt
+    tags: true
+    all_branches: true
