@@ -7,6 +7,11 @@
 # The symbolic name is up to the user. Note that depending on the profile, the symbolic name may be suffixed to
 #  form multiple different topics for different reading values 
 #
+
 # Example 1: A Hoppe window handle
 1825116  F6-10-00	Tür Küche
-	
+
+# Example 2: An Elktao 4 rocker switch (FHS8) actually has two IDs
+fefed379	F6-02-01		Taster Küche G1
+fefed37c	F6-02-01		Taster Küche G2
+

@@ -12,23 +12,6 @@ public class DeviceManager
 	private static Map<String,Device> devicesByName=new HashMap<>();
 	private static Map<Long,Device> devicesByID=new HashMap<>();
 
-	public static class Device
-	{
-		public final Long id;
-		public final EEP eep;
-		public final String name;
-		protected Device(Long id, EEP eep, String name)
-		{
-			this.id=id;
-			this.eep=eep;
-			this.name=name;
-		}
-		public String getHexID()
-		{
-			return Long.toHexString(id.longValue());
-		}
-	}
-
 	public static Device getDeviceByName(String name)
 	{
 		return devicesByName.get(name);

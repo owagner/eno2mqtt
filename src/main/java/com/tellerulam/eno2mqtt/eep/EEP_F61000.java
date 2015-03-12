@@ -1,14 +1,15 @@
 package com.tellerulam.eno2mqtt.eep;
 
-import com.tellerulam.eno2mqtt.DeviceManager.Device;
+import com.tellerulam.eno2mqtt.*;
 import com.tellerulam.eno2mqtt.esp3.*;
 
 public class EEP_F61000 extends EEP
 {
+	@SuppressWarnings("boxing")
 	@Override
 	public void handleMessage(Device d, ESP3ERP1Packet p)
 	{
-		assertPacketType(p,ESP3ERP1_1BSPacket.class);
+		assertPacketType(p,ESP3ERP1_RPSPacket.class);
 
 		int v=p.getByteValue()>>4;
 

@@ -57,7 +57,7 @@ public abstract class USB300Connector extends Thread
 	private void dispatchERP1Packet(ESP3ERP1Packet p)
 	{
 		L.info("Packet from "+Long.toHexString(p.senderID));
-		DeviceManager.Device d=DeviceManager.getDeviceByID(p.senderID);
+		Device d=DeviceManager.getDeviceByID(p.senderID);
 		if(d==null)
 		{
 			L.warning("ERP1 packet from unknown device "+Long.toHexString(p.senderID)+" ignored, please update your device list file!");
@@ -73,6 +73,11 @@ public abstract class USB300Connector extends Thread
 		switch(b[0]&0xff)
 		{
 			case 0xf6:
+				p=new ESP3ERP1_RPSPacket();
+				p.parseResponse(b);
+				dispatchERP1Packet(p);
+				break;
+
 			case 0xd5:
 				p=new ESP3ERP1_1BSPacket();
 				p.parseResponse(b);

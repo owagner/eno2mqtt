@@ -143,7 +143,7 @@ public class MQTTHandler
 		Main.t.schedule(new StateChecker(),30*1000,30*1000);
 	}
 
-	private void doPublish(String name, Object val, String src)
+	private void doPublish(String name, Object val, String src,boolean retain)
 	{
 		JsonObject jso=new JsonObject();
 		jso.add("eno_srcid",src);
@@ -156,7 +156,7 @@ public class MQTTHandler
 		String txtmsg=jso.toString();
 		MqttMessage msg=new MqttMessage(jso.toString().getBytes(StandardCharsets.UTF_8));
 		msg.setQos(0);
-		msg.setRetained(true);
+		msg.setRetained(retain);
 		try
 		{
 			String fullTopic=topicPrefix+"status/"+name;
@@ -181,9 +181,13 @@ public class MQTTHandler
 		}
 	}
 
+	public static void publish(String name, Object val, String src,boolean retain)
+	{
+		instance.doPublish(name,val,src,retain);
+	}
 	public static void publish(String name, Object val, String src)
 	{
-		instance.doPublish(name,val,src);
+		instance.doPublish(name,val,src,true);
 	}
 
 }
