@@ -58,6 +58,6 @@ public class Main
 		SyslogHandler.readConfig();
 		DeviceManager.readDeviceList();
 		MQTTHandler.init();
-		USB300Connector.setupConnections();
+		TCM310Connector.setupConnections();
 	}
 }

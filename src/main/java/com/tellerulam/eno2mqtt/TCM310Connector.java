@@ -10,9 +10,9 @@ import java.util.logging.*;
 
 import com.tellerulam.eno2mqtt.esp3.*;
 
-public abstract class USB300Connector extends Thread
+public abstract class TCM310Connector extends Thread
 {
-	static private List<USB300Connector> connectors=new ArrayList<>();
+	static private List<TCM310Connector> connectors=new ArrayList<>();
 
 	protected InputStream is;
 	protected OutputStream os;
@@ -34,15 +34,45 @@ public abstract class USB300Connector extends Thread
 
 	private void sendInitPackets() throws IOException, InterruptedException
 	{
+		ESP3ResetPacket reset=new ESP3ResetPacket();
+		transact(reset);
+
+		Thread.sleep(250);
+
 		ESP3ReadVersionPacket rvp=new ESP3ReadVersionPacket();
 		if(!transact(rvp))
 			throw new IllegalStateException("ReadVersion did not return OK");
-		L.info("USB300: APP version "+rvp.appVersion+" API version "+rvp.apiVersion+" Chip ID "+rvp.chipID+" Chip Version "+rvp.chipVersion+" APP description "+rvp.appDescription);
+		L.info("TCM310: APP version "+rvp.appVersion+" API version "+rvp.apiVersion+" Chip ID "+rvp.chipID+" Chip Version "+rvp.chipVersion+" APP description "+rvp.appDescription);
 
 		ESP3ReadBaseIDPacket rbi=new ESP3ReadBaseIDPacket();
 		if(!transact(rbi))
 			throw new IllegalStateException("ReadBaseID did not return OK");
-		L.info("USB300: BaseID is "+rbi.baseID);
+		L.info("TCM310: BaseID is "+rbi.baseID);
+
+		String setRepeater=System.getProperty("eno2mqtt.eno.setRepeater");
+		if(setRepeater!=null)
+		{
+			String srp[]=setRepeater.split(",");
+			int level=1;
+			if(srp.length==2 && "LEVEL2".equals(srp[1]))
+				level=2;
+			int enabled;
+			if("OFF".equals(srp[0]))
+				enabled=0;
+			else if("ALL".equals(srp[0]))
+				enabled=1;
+			else if("FILTERED".equals(srp[0]))
+				enabled=2;
+			else
+				throw new IllegalArgumentException("Invalid eno.setRepeater mode "+setRepeater);
+			ESP3WriteRepeaterPacket wrp=new ESP3WriteRepeaterPacket(enabled, level);
+			if(!transact(wrp))
+				L.warning("Changing repeater mode FAILED");
+		}
+
+		ESP3ReadRepeaterPacket rrp=new ESP3ReadRepeaterPacket();
+		if(transact(rrp))
+			L.info("TCM310: Repeater ENABLED="+rrp.getRepeaterEnable()+" LEVEL="+rrp.getRepeaterLevel());
 
 		MQTTHandler.setEnoceanConnectionState(true);
 	}
@@ -54,9 +84,9 @@ public abstract class USB300Connector extends Thread
 	}
 
 	@SuppressWarnings("boxing")
-	private void dispatchERP1Packet(ESP3ERP1Packet p)
+	private void dispatchERP1Packet(ESP3ERP1Packet p,ExtendedInfo ei)
 	{
-		L.info("Packet from "+Long.toHexString(p.senderID));
+		L.info("Packet "+p+" "+ei);
 		Device d=DeviceManager.getDeviceByID(p.senderID);
 		if(d==null)
 		{
@@ -66,26 +96,61 @@ public abstract class USB300Connector extends Thread
 		d.eep.handleMessage(d,p);
 	}
 
-	private void parseERP1(byte b[])
+	private static class ExtendedInfo
+	{
+		int subTelNum;
+		long destinationID;
+		int dBm;
+
+		@Override
+		public String toString()
+		{
+			StringBuilder s=new StringBuilder();
+			s.append('{');
+			s.append(subTelNum);
+			s.append('@');
+			s.append(Long.toHexString(destinationID));
+			s.append('-');
+			s.append(dBm);
+			s.append("dBm}");
+			return s.toString();
+		}
+	}
+
+	private void parseERP1(byte b[],byte op[])
 	{
 		ESP3ERP1Packet p;
+
+		ExtendedInfo ei=new ExtendedInfo();
+		if(op!=null)
+		{
+			if(op.length>0)
+				ei.subTelNum=op[0];
+			if(op.length>4)
+			{
+				for(int n=1;n<5;n++)
+					ei.destinationID=ei.destinationID<<8|(op[n]&0xff);
+			}
+			if(op.length>5)
+				ei.dBm=op[5];
+		}
 
 		switch(b[0]&0xff)
 		{
 			case 0xf6:
 				p=new ESP3ERP1_RPSPacket();
 				p.parseResponse(b);
-				dispatchERP1Packet(p);
+				dispatchERP1Packet(p,ei);
 				break;
 
 			case 0xd5:
 				p=new ESP3ERP1_1BSPacket();
 				p.parseResponse(b);
-				dispatchERP1Packet(p);
+				dispatchERP1Packet(p,ei);
 				break;
 
 			default:
-				L.warning("Ignoring ERP1 packet of RORG "+b[0]);
+				L.warning("Ignoring ERP1 packet of RORG "+b[0]+" "+ei);
 		}
 	}
 
@@ -143,12 +208,13 @@ public abstract class USB300Connector extends Thread
 				switch(packetType)
 				{
 					case 1:
-						parseERP1(data);
+						parseERP1(data,opData);
 						break;
 
 					case 2:
 						parseResponse(data);
 						break;
+
 					default:
 						L.info("Ignoring packet of type "+packetType+" with dlen="+dataLength+" oplen="+opDataLength);
 				}
@@ -160,7 +226,7 @@ public abstract class USB300Connector extends Thread
 		}
 	}
 
-	private static class SerialConnector extends USB300Connector
+	private static class SerialConnector extends TCM310Connector
 	{
 		SerialConnector(String port)
 		{
@@ -171,7 +237,7 @@ public abstract class USB300Connector extends Thread
 		}
 	}
 
-	private static class NetworkConnector extends USB300Connector
+	private static class NetworkConnector extends TCM310Connector
 	{
 		NetworkConnector(String hostspec) throws NumberFormatException, UnknownHostException, IOException
 		{
@@ -191,7 +257,7 @@ public abstract class USB300Connector extends Thread
 		String specs[]=connectionspecs.split(",");
 		for(String spec:specs)
 		{
-			USB300Connector conn;
+			TCM310Connector conn;
 			if(spec.startsWith("NET:"))
 				conn=new NetworkConnector(spec.substring(4));
 			else

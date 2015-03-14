@@ -8,7 +8,7 @@ eno2mqtt
 
 Overview
 --------
-eno2mqtt is a gateway between a Enocean USB300 interface and MQTT. It receives Enocean ERP1 telegrams and 
+eno2mqtt is a gateway between a Enocean TCM310 module (e.g. a USB300) and MQTT. It receives Enocean ERP1 telegrams and 
 publishes them as MQTT topics.
 
 It's intended as a building block in heterogenous smart home environments where an MQTT message broker is 
@@ -28,9 +28,9 @@ Dependencies
 
 Connection
 ----------
-The connection to the USB300 device can either be made locally (although it's an USB stick, it's effectivly
-just a serial device) or remotely via network via some remote serial service. The latter is useful if you want to
-put the USB300 stick in the most efficient position RF-wise, but have the actual processing running elsewhere. 
+The connection to the TCM310 device can either be made locally through a serial port (the USB300 stick is just
+a TCM310 with a FTDI USB<->Serial converter) or remotely via network via some remote serial service. The latter is useful if you 
+want to put the USB300 stick in the most efficient position RF-wise, but have the actual processing running elsewhere. 
 Some very low grade hardware (e.g. a TP-LINK WR703N with OpenWRT) can then be used as a remserial server for the
 stick.
 
@@ -68,14 +68,14 @@ The message format generated is a JSON encoded object with the following members
 EEP specifics
 -------------
 
-*** F6-02 ***
-*** F6-03 ***
+* F6-02
+* F6-03 ***
 
 Rocker switches. Publishes state to subtopics "AI", "AO" etc. as either 1 for pressed
 or 0 for released. The published messages are not retained, as those are one-shot
 events. Dual-button presses are reported on the respective dual-button topic, e.g. "AIBI".
 
-*** F6-10-00 ***
+* F6-10-00 ***
 
 Window handle: val=0 down, val=1 left/right, val=2 up
 
@@ -85,23 +85,28 @@ Usage
 Configuration options can either be specified on the command line, or as system properties with the prefix "eno2mqtt".
 Examples:
 
-    java -jar eno2mqtt.jar eno.usb300=/dev/ttyUSB03 eno.deviceList=devicelist.txt
+    java -jar eno2mqtt.jar eno.tcm=/dev/ttyUSB03 eno.deviceList=devicelist.txt
     
-    java -Dknxmqtt.knx.ip=127.0.0.1 -jar knx2mqtt.jar
+    java -Deno.tcm=/dev/ttyUSB03 -jar eno2mqtt.jar
     
 ### Available options:    
 
-- eno.usb300
+- eno.tcm
   
   Either a com port specification, or a network address in the form
   
   NET:host:port
   
-  Must be specified.
+  for a remote serial server. Must be specified.
   
 - eno.deviceList
 
   The device list file. Must be specified.
+  
+- eno.setRepeater
+
+  Set the repeater mode of the TCM. Format is "mode,level". Mode can be OFF, ALL or FILTERED,
+  level can be LEVEL1 or LEVEL2
   
 - mqtt.server
 
@@ -128,6 +133,11 @@ See also
   
 Changelog
 ---------
+* 0.3 - 2015/03/14 - owagner
+  - renamed property eno.usb300 to the more accurate eno.tcm
+  - added eno.setRepeater to set the repeater mode of the TCM
+  - more detailed log output about received frames (including dest ID, RSSI and status flags)
+  
 * 0.2 - 2015/03/12 - owagner
   - now supports F6-02 and F6-03 EEPs (rocker switches)
 

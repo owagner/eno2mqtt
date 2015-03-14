@@ -32,7 +32,7 @@ public abstract class ESP3Packet
 		return new String(b,offs,n,StandardCharsets.ISO_8859_1);
 	}
 
-	public ESP3Packet(byte type,byte data[])
+	public void setData(byte type,byte data[])
 	{
 		b=new byte[data.length+6+1];
 
@@ -44,6 +44,15 @@ public abstract class ESP3Packet
 		b[5]=CRC8.calcCRC(b, 1, 4);
 		System.arraycopy(data,0,b,6,data.length);
 		b[data.length+6]=CRC8.calcCRC(b, 1, data.length+5);
+	}
+
+	protected ESP3Packet()
+	{
+	}
+
+	protected ESP3Packet(byte type,byte data[])
+	{
+		setData(type,data);
 	}
 
 	public void send(OutputStream os) throws IOException
