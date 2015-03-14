@@ -54,8 +54,8 @@ public class Main
 			}
 			System.setProperty("eno2mqtt."+sp[0],sp[1]);
 		}
-		Logger.getLogger(Main.class.getName()).info("eno2mqtt V"+getVersion()+" (C) 2015 Oliver Wagner <owagner@tellerulam.com>");
 		SyslogHandler.readConfig();
+		Logger.getLogger(Main.class.getName()).info("eno2mqtt V"+getVersion()+" (C) 2015 Oliver Wagner <owagner@tellerulam.com>");
 		DeviceManager.readDeviceList();
 		MQTTHandler.init();
 		TCM310Connector.setupConnections();

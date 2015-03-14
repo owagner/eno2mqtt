@@ -70,13 +70,13 @@ EEP specifics
 -------------
 
 * F6-02
-* F6-03 ***
+* F6-03
 
 Rocker switches. Publishes state to subtopics "AI", "AO" etc. as either 1 for pressed
 or 0 for released. The published messages are not retained, as those are one-shot
 events. Dual-button presses are reported on the respective dual-button topic, e.g. "AIBI".
 
-* F6-10-00 ***
+* F6-10-00
 
 Window handle: val=0 down, val=1 left/right, val=2 up
 

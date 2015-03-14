@@ -44,4 +44,11 @@ public class Device
 			state=new HashMap<>();
 		state.put(key,value);
 	}
+
+	@SuppressWarnings("boxing")
+	@Override
+	public String toString()
+	{
+		return "{"+Long.toHexString(id)+"/"+name+"|"+eep.getClass().getName()+"}";
+	}
 }

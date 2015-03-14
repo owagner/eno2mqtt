@@ -209,6 +209,7 @@ public abstract class TCM310Connector extends Thread
 	{
 		SerialConnector(String port)
 		{
+			L.info("Using serial port "+port);
 			NRSerialPort serial=new NRSerialPort(port,57600);
 			serial.connect();
 			is=serial.getInputStream();
@@ -220,6 +221,7 @@ public abstract class TCM310Connector extends Thread
 	{
 		NetworkConnector(String hostspec) throws NumberFormatException, UnknownHostException, IOException
 		{
+			L.info("Using network connection to "+hostspec);
 			String spec[]=hostspec.split(":",2);
 			@SuppressWarnings("resource")
 			Socket s=new Socket(spec[0],spec.length==2?Integer.parseInt(spec[1]):23000);
@@ -230,7 +232,7 @@ public abstract class TCM310Connector extends Thread
 
 	static void setupConnections() throws NumberFormatException, UnknownHostException, IOException, InterruptedException
 	{
-		String connectionspecs=System.getProperty("eno2mqtt.eno.usb300");
+		String connectionspecs=System.getProperty("eno2mqtt.eno.tcm");
 		if(connectionspecs==null)
 			throw new IllegalArgumentException("You must specify a serial or network connection to an USB300 device");
 		String specs[]=connectionspecs.split(",");
@@ -247,6 +249,6 @@ public abstract class TCM310Connector extends Thread
 		}
 	}
 
-	private final Logger L=Logger.getLogger(getClass().getName());
+	private static final Logger L=Logger.getLogger(TCM310Connector.class.getName());
 
 }
