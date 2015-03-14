@@ -7,7 +7,7 @@ public class EEP_F61000 extends EEP
 {
 	@SuppressWarnings("boxing")
 	@Override
-	public void handleMessage(Device d, ESP3ERP1Packet p)
+	public void handleMessage(Device d, ESP3ERP1Packet p,ExtendedInfo ei)
 	{
 		assertPacketType(p,ESP3ERP1_RPSPacket.class);
 
@@ -22,7 +22,7 @@ public class EEP_F61000 extends EEP
 		else if((v&13)==12)
 			v=1;
 
-		publish(d,v);
+		publish(d,v,ei.dBm);
 	}
 
 }

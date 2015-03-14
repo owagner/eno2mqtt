@@ -1,7 +1,5 @@
 package com.tellerulam.eno2mqtt.eep;
 
-import java.util.*;
-
 import com.tellerulam.eno2mqtt.*;
 import com.tellerulam.eno2mqtt.esp3.*;
 
@@ -18,7 +16,7 @@ public class EEP_F602xx extends EEP
 
 	@SuppressWarnings("boxing")
 	@Override
-	public void handleMessage(Device d, ESP3ERP1Packet p)
+	public void handleMessage(Device d, ESP3ERP1Packet p,ExtendedInfo ei)
 	{
 		assertPacketType(p,ESP3ERP1_RPSPacket.class);
 
@@ -37,7 +35,7 @@ public class EEP_F602xx extends EEP
 			else
 				key=buttons[r];
 
-			publish(d,key,1,false);
+			publish(d,key,1,false,ei.dBm);
 			d.setState("PRESSED"+key,Boolean.TRUE);
 		}
 		else
@@ -49,7 +47,7 @@ public class EEP_F602xx extends EEP
 				{
 					if(d.getState(key)==Boolean.TRUE)
 					{
-						publish(d,key.substring(7),0,false);
+						publish(d,key.substring(7),0,false,ei.dBm);
 						d.setState(key,Boolean.FALSE);
 					}
 				}

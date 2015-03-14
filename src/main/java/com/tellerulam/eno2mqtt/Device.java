@@ -25,7 +25,10 @@ public class Device
 
 	public synchronized Map<String,Object> getStates()
 	{
-		return new HashMap<>(state);
+		if(state!=null)
+			return new HashMap<>(state);
+		else
+			return null;
 	}
 
 	public synchronized Object getState(String key)

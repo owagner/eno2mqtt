@@ -31,7 +31,7 @@ public abstract class EEP
 		}
 	}
 
-	public abstract void handleMessage(Device d,ESP3ERP1Packet p);
+	public abstract void handleMessage(Device d,ESP3ERP1Packet p,ExtendedInfo ei);
 
 	protected void assertPacketType(ESP3ERP1Packet p,Class<? extends ESP3ERP1Packet> whichPacket)
 	{
@@ -39,20 +39,23 @@ public abstract class EEP
 			throw new IllegalArgumentException("Got unexpected packet type "+p.getPacketType()+" for profile "+this);
 	}
 
-	protected void publish(Device d,Object val)
+	protected void publish(Device d,Object val,int dbm)
 	{
 		MQTTHandler.publish(
 			d.name,
 			val,
-			d.getHexID()
+			d.getHexID(),
+			dbm
 		);
 	}
-	protected void publish(Device d,String suffix,Object val,boolean retain)
+	protected void publish(Device d,String suffix,Object val,boolean retain,int dbm)
 	{
 		MQTTHandler.publish(
 			d.name+'/'+suffix,
 			val,
-			d.getHexID()
+			d.getHexID(),
+			retain,
+			dbm
 		);
 	}
 }

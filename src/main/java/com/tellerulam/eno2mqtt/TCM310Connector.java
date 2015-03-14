@@ -93,28 +93,7 @@ public abstract class TCM310Connector extends Thread
 			L.warning("ERP1 packet from unknown device "+Long.toHexString(p.senderID)+" ignored, please update your device list file!");
 			return;
 		}
-		d.eep.handleMessage(d,p);
-	}
-
-	private static class ExtendedInfo
-	{
-		int subTelNum;
-		long destinationID;
-		int dBm;
-
-		@Override
-		public String toString()
-		{
-			StringBuilder s=new StringBuilder();
-			s.append('{');
-			s.append(subTelNum);
-			s.append('@');
-			s.append(Long.toHexString(destinationID));
-			s.append('-');
-			s.append(dBm);
-			s.append("dBm}");
-			return s.toString();
-		}
+		d.eep.handleMessage(d,p,ei);
 	}
 
 	private void parseERP1(byte b[],byte op[])

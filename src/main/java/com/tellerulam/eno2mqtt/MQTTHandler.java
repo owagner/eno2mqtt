@@ -143,16 +143,17 @@ public class MQTTHandler
 		Main.t.schedule(new StateChecker(),30*1000,30*1000);
 	}
 
-	private void doPublish(String name, Object val, String src,boolean retain)
+	private void doPublish(String name, Object val, String src,boolean retain,int dbm)
 	{
 		JsonObject jso=new JsonObject();
-		jso.add("eno_srcid",src);
 		if(val instanceof Integer)
 			jso.add("val",((Integer)val).intValue());
 		else if(val instanceof Float)
 			jso.add("val",((Float)val).floatValue());
 		else
 			jso.add("val",val.toString());
+		jso.add("eno_srcid",src);
+		jso.add("eno_dbm",-dbm);
 		String txtmsg=jso.toString();
 		MqttMessage msg=new MqttMessage(jso.toString().getBytes(StandardCharsets.UTF_8));
 		msg.setQos(0);
@@ -181,13 +182,13 @@ public class MQTTHandler
 		}
 	}
 
-	public static void publish(String name, Object val, String src,boolean retain)
+	public static void publish(String name, Object val, String src,boolean retain,int dbm)
 	{
-		instance.doPublish(name,val,src,retain);
+		instance.doPublish(name,val,src,retain,dbm);
 	}
-	public static void publish(String name, Object val, String src)
+	public static void publish(String name, Object val, String src,int dbm)
 	{
-		instance.doPublish(name,val,src,true);
+		instance.doPublish(name,val,src,true,dbm);
 	}
 
 }

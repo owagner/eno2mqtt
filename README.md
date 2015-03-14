@@ -63,6 +63,7 @@ The message format generated is a JSON encoded object with the following members
 * val - the actual value, in numeric format
 * eno_srcid - when sending message, eno2mqtt fills in the source ID of the sending device. 
   This field is ignored on incoming messages.
+* eno_dbm - the RSSI value of the received message
 
 
 EEP specifics
@@ -137,6 +138,7 @@ Changelog
   - renamed property eno.usb300 to the more accurate eno.tcm
   - added eno.setRepeater to set the repeater mode of the TCM
   - more detailed log output about received frames (including dest ID, RSSI and status flags)
+  - include RSSI value in generated messages
   
 * 0.2 - 2015/03/12 - owagner
   - now supports F6-02 and F6-03 EEPs (rocker switches)
