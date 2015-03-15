@@ -8,8 +8,8 @@ eno2mqtt
 
 Overview
 --------
-eno2mqtt is a gateway between a Enocean TCM310 module (e.g. a USB300) and MQTT. It receives Enocean ERP1 telegrams and 
-publishes them as MQTT topics.
+eno2mqtt is a gateway between a Enocean TCM310 module (e.g. a USB300 or Enocean PI) and MQTT. It receives Enocean 
+ERP1 telegrams and publishes them as MQTT topics.
 
 It's intended as a building block in heterogenous smart home environments where an MQTT message broker is 
 used as the centralized message bus. See https://github.com/mqtt-smarthome for a rationale and architectural 
@@ -94,6 +94,8 @@ Examples:
 
 - eno.tcm
   
+  The TCM310 device to connect to (USB300, Enocean PI etc.)
+  
   Either a com port specification, or a network address in the form
   
   NET:host:port
@@ -134,6 +136,9 @@ See also
   
 Changelog
 ---------
+* 0.4 - 2015/03/15 - owagner
+  - now sends RD_DUTYCYCLE every 60s and dumps a possible output, mostly as a serial-level keepalive
+
 * 0.3 - 2015/03/14 - owagner
   - renamed property eno.usb300 to the more accurate eno.tcm
   - added eno.setRepeater to set the repeater mode of the TCM

@@ -20,7 +20,7 @@ public abstract class TCM310Connector extends Thread
 	private CountDownLatch responseLatch;
 	private byte[] responseBuffer;
 
-	public boolean transact(ESP3Packet p) throws IOException, InterruptedException
+	public synchronized boolean transact(ESP3Packet p) throws IOException, InterruptedException
 	{
 		responseLatch=new CountDownLatch(1);
 		p.send(os);
@@ -30,6 +30,26 @@ public abstract class TCM310Connector extends Thread
 			return p.isResponseOK();
 		}
 		return false;
+	}
+
+	private class DutyCycleReader extends TimerTask
+	{
+		@Override
+		public void run()
+		{
+			ESP3ReadDutycyclePacket rdc=new ESP3ReadDutycyclePacket();
+			try
+			{
+				if(transact(rdc))
+				{
+					L.info("TCM: Duty cycle available "+rdc.availableCycle+"%, slots "+rdc.slots+" period "+rdc.slotPeriod+"s, time left in slot "+rdc.slotLeft+"s, load after actual "+rdc.loadAfterActual+"%");
+				}
+			}
+			catch(IOException | InterruptedException e)
+			{
+				L.log(Level.WARNING,"Error while reading duty cycle",e);
+			}
+		}
 	}
 
 	private void sendInitPackets() throws IOException, InterruptedException
@@ -42,12 +62,12 @@ public abstract class TCM310Connector extends Thread
 		ESP3ReadVersionPacket rvp=new ESP3ReadVersionPacket();
 		if(!transact(rvp))
 			throw new IllegalStateException("ReadVersion did not return OK");
-		L.info("TCM310: APP version "+rvp.appVersion+" API version "+rvp.apiVersion+" Chip ID "+rvp.chipID+" Chip Version "+rvp.chipVersion+" APP description "+rvp.appDescription);
+		L.info("TCM: APP version "+rvp.appVersion+" API version "+rvp.apiVersion+" Chip ID "+rvp.chipID+" Chip Version "+rvp.chipVersion+" APP description "+rvp.appDescription);
 
 		ESP3ReadBaseIDPacket rbi=new ESP3ReadBaseIDPacket();
 		if(!transact(rbi))
 			throw new IllegalStateException("ReadBaseID did not return OK");
-		L.info("TCM310: BaseID is "+rbi.baseID);
+		L.info("TCM: BaseID is "+rbi.baseID);
 
 		String setRepeater=System.getProperty("eno2mqtt.eno.setRepeater");
 		if(setRepeater!=null)
@@ -72,9 +92,14 @@ public abstract class TCM310Connector extends Thread
 
 		ESP3ReadRepeaterPacket rrp=new ESP3ReadRepeaterPacket();
 		if(transact(rrp))
-			L.info("TCM310: Repeater ENABLED="+rrp.getRepeaterEnable()+" LEVEL="+rrp.getRepeaterLevel());
+			L.info("TCM: Repeater ENABLED="+rrp.getRepeaterEnable()+" LEVEL="+rrp.getRepeaterLevel());
 
 		MQTTHandler.setEnoceanConnectionState(true);
+
+		Main.t.schedule(new DutyCycleReader(),
+			3*1000,
+			60*1000
+		);
 	}
 
 	private void parseResponse(byte b[])

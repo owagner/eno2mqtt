@@ -22,6 +22,13 @@ public abstract class ESP3Packet
 			c=c<<8|(b[offs+n]&0xff);
 		return c;
 	}
+	protected int decodeN16(int offs)
+	{
+		int c=0;
+		for(int n=0;n<2;n++)
+			c=c<<8|(b[offs+n]&0xff);
+		return c;
+	}
 
 	protected String decodeString(int offs,int maxLength)
 	{
