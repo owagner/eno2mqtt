@@ -28,7 +28,7 @@ public class Device
 		if(state!=null)
 			return new HashMap<>(state);
 		else
-			return null;
+			return Collections.emptyMap();
 	}
 
 	public synchronized Object getState(String key)
@@ -49,6 +49,6 @@ public class Device
 	@Override
 	public String toString()
 	{
-		return "{"+Long.toHexString(id)+"/"+name+"|"+eep.getClass().getName()+"}";
+		return "{"+Long.toHexString(id)+"/"+name+"|"+eep.getProfileName()+"}";
 	}
 }

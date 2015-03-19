@@ -22,7 +22,7 @@ public class EEP_F61000 extends EEP
 		else if((v&13)==12)
 			v=1;
 
-		publish(d,v,ei.dBm);
+		publish(d,null,v,true,ei.dBm);
 	}
 
 }

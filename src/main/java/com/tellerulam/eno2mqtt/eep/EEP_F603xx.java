@@ -7,4 +7,11 @@ public class EEP_F603xx extends EEP_F602xx
 		super(appStyle);
 	}
 
+	@Override
+	public String getProfileName()
+	{
+		return super.getProfileName().replace("F6-02","F6-03");
+	}
+
+
 }

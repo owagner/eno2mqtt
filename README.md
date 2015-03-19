@@ -8,8 +8,8 @@ eno2mqtt
 
 Overview
 --------
-eno2mqtt is a gateway between a Enocean TCM310 module (e.g. a USB300 or Enocean PI) and MQTT. It receives Enocean 
-ERP1 telegrams and publishes them as MQTT topics.
+eno2mqtt is a gateway between a Enocean ESP3-capable gateway module (e.g. a TCM310, USB300 or Enocean PI) and MQTT. 
+It receives Enocean  ERP1 telegrams and publishes them as MQTT topics.
 
 It's intended as a building block in heterogenous smart home environments where an MQTT message broker is 
 used as the centralized message bus. See https://github.com/mqtt-smarthome for a rationale and architectural 
@@ -28,7 +28,7 @@ Dependencies
 
 Connection
 ----------
-The connection to the TCM310 device can either be made locally through a serial port (the USB300 stick is just
+The connection to the ESP3 device can either be made locally through a serial port (the USB300 stick is just
 a TCM310 with a FTDI USB<->Serial converter) or remotely via network via some remote serial service. The latter is useful if you 
 want to put the USB300 stick in the most efficient position RF-wise, but have the actual processing running elsewhere. 
 Some very low grade hardware (e.g. a TP-LINK WR703N with OpenWRT) can then be used as a remserial server for the
@@ -48,12 +48,13 @@ The *EEP* is the Enocean Equipment Profile ID, in the form RORG-FUNC-TYPE. A lis
 at https://www.enocean.com/en/knowledge-base/
 
 The *Symbolic_Name* is used as the topic prefix when publishing status reports from the given device.
+Depending on the EEP, this may be suffixed further.
 
 
 Topics
 ------
 A special topic is *prefix/connected*. It holds an enum value which denotes whether the adapter is
-currently running (1) and connected to the USB300 adapter (2). It's set to 0 on disconnect using a MQTT will.
+currently running (1) and connected to the ESP3 devices (2). It's set to 0 on disconnect using a MQTT will.
 
 
 MQTT Message format
@@ -86,21 +87,22 @@ Usage
 Configuration options can either be specified on the command line, or as system properties with the prefix "eno2mqtt".
 Examples:
 
-    java -jar eno2mqtt.jar eno.tcm=/dev/ttyUSB03 eno.deviceList=devicelist.txt
+    java -jar eno2mqtt.jar eno.esp3=/dev/ttyUSB0 eno.deviceList=devicelist.txt
     
-    java -Deno.tcm=/dev/ttyUSB03 -jar eno2mqtt.jar
+    java -Deno.esp3=/dev/ttyUSB0 -jar eno2mqtt.jar
     
 ### Available options:    
 
-- eno.tcm
+- eno.esp3
   
-  The TCM310 device to connect to (USB300, Enocean PI etc.)
+  One or more ESP3 devices to connect to (TCM310, USB300, Enocean PI etc.)
   
   Either a com port specification, or a network address in the form
   
   NET:host:port
   
-  for a remote serial server. Must be specified.
+  for a remote serial server. Multiple devices can be specified in a comma-separated
+  list. Must be specified.
   
 - eno.deviceList
 
@@ -136,6 +138,14 @@ See also
   
 Changelog
 ---------
+* 0.5 - 2015/03/19 - owagner
+  - now properly supports multiple ESP3 connections. Will filter duplicate messages within 500ms.
+  - made initial device list dump in log more readable
+  - log sync errors
+  - fixed setting repeater to OFF mode
+  - terminate if there is an error in communicating with the TCM310 device
+  - relabeled all references to TCM310 to the even more accurate ESP3 designation
+  
 * 0.4 - 2015/03/15 - owagner
   - now sends RD_DUTYCYCLE every 60s and dumps a possible output, mostly as a serial-level keepalive
 

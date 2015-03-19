@@ -58,6 +58,6 @@ public class Main
 		Logger.getLogger(Main.class.getName()).info("eno2mqtt V"+getVersion()+" (C) 2015 Oliver Wagner <owagner@tellerulam.com>");
 		DeviceManager.readDeviceList();
 		MQTTHandler.init();
-		TCM310Connector.setupConnections();
+		ESP3Connector.setupConnections();
 	}
 }

@@ -12,6 +12,12 @@ public class EEP_F602xx extends EEP
 		this.appStyle=appStyle;
 	}
 
+	@Override
+	public String getProfileName()
+	{
+		return "F6-02-0"+appStyle;
+	}
+
 	private static final String buttons[]={"AI","AO","BI","BO","CI","CO","DI","DO"};
 
 	@SuppressWarnings("boxing")

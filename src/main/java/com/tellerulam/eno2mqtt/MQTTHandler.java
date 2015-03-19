@@ -186,9 +186,4 @@ public class MQTTHandler
 	{
 		instance.doPublish(name,val,src,retain,dbm);
 	}
-	public static void publish(String name, Object val, String src,int dbm)
-	{
-		instance.doPublish(name,val,src,true,dbm);
-	}
-
 }
