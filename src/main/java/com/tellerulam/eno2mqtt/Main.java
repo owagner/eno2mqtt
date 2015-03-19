@@ -7,8 +7,6 @@ import java.util.*;
 import java.util.logging.*;
 import java.util.regex.*;
 
-import org.eclipse.paho.client.mqttv3.*;
-
 public class Main
 {
 	static final Timer t=new Timer(true);
@@ -39,7 +37,7 @@ public class Main
 		return version;
 	}
 
-	public static void main(String[] args) throws MqttException, SecurityException, IOException, NumberFormatException
+	public static void main(String[] args) throws SecurityException, IOException, NumberFormatException
 	{
 		/*
 		 * Interpret all command line arguments as property definitions (without the knx2mqtt prefix)
