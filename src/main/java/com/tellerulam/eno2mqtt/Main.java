@@ -55,9 +55,18 @@ public class Main
 			System.setProperty("eno2mqtt."+sp[0],sp[1]);
 		}
 		SyslogHandler.readConfig();
-		Logger.getLogger(Main.class.getName()).info("eno2mqtt V"+getVersion()+" (C) 2015 Oliver Wagner <owagner@tellerulam.com>");
-		DeviceManager.readDeviceList();
-		MQTTHandler.init();
-		ESP3Connector.setupConnections();
+		Logger L=Logger.getLogger(Main.class.getName());
+		L.info("eno2mqtt V"+getVersion()+" (C) 2015 Oliver Wagner <owagner@tellerulam.com>");
+		try
+		{
+			DeviceManager.readDeviceList();
+			MQTTHandler.init();
+			ESP3Connector.setupConnections();
+		}
+		catch(Exception e)
+		{
+			L.log(Level.SEVERE,"Startup error",e);
+			System.exit(1);
+		}
 	}
 }

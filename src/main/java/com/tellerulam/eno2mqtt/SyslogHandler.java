@@ -113,7 +113,7 @@ public class SyslogHandler extends Handler
 		Formatter dateFormatter=new Formatter(m,Locale.US);
 		dateFormatter.format("%1$tb %2$2d %1$TT",cal,cal.get(Calendar.DAY_OF_MONTH));
 		dateFormatter.close();
-		m.append(" ");
+		m.append(' ');
 		m.append(hostname);
 		m.append(" eno2mqtt");
 		m.append(pidSuffix);
@@ -129,11 +129,11 @@ public class SyslogHandler extends Handler
 				m.setLength(prefixLength);
 				continue;
 			}
-			if(m.length()==1020)
+			if(m.length()==920)
 			{
 				m.append("...");
 			}
-			if(m.length()==1023)
+			if(m.length()==923)
 				continue;
 			if(ch>=126)
 				m.append('_');

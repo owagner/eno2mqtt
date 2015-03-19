@@ -20,7 +20,7 @@ public abstract class ESP3Connector extends Thread
 	private CountDownLatch responseLatch;
 	private byte[] responseBuffer;
 
-	private final String logPrefix;
+	protected final String logPrefix;
 
 	public synchronized boolean transact(ESP3Packet p) throws IOException, InterruptedException
 	{
@@ -251,7 +251,7 @@ public abstract class ESP3Connector extends Thread
 		SerialConnector(String port,int instanceNr)
 		{
 			super(instanceNr);
-			L.info("Using serial port "+port);
+			L.info(logPrefix+"Using serial port "+port);
 			NRSerialPort serial=new NRSerialPort(port,57600);
 			serial.connect();
 			is=serial.getInputStream();
@@ -264,7 +264,7 @@ public abstract class ESP3Connector extends Thread
 		NetworkConnector(String hostspec,int instanceNr) throws NumberFormatException, UnknownHostException, IOException
 		{
 			super(instanceNr);
-			L.info("Using network connection to "+hostspec);
+			L.info(logPrefix+"Using network connection to "+hostspec);
 			String spec[]=hostspec.split(":",2);
 			@SuppressWarnings("resource")
 			Socket s=new Socket(spec[0],spec.length==2?Integer.parseInt(spec[1]):23000);
