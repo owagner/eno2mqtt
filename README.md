@@ -140,10 +140,11 @@ Changelog
 ---------
 * 0.5 - 2015/03/19 - owagner
   - now properly supports multiple ESP3 connections. Will filter duplicate messages within 500ms.
+  - changed state handling: will now retry failed connections every 10 seconds. Will keep running
+    as long as there is at least one active connection within 15 seconds
   - made initial device list dump in log more readable
   - log sync errors
   - fixed setting repeater to OFF mode
-  - terminate if there is an error in communicating with the TCM310 device
   - relabeled all references to TCM310 to the even more accurate ESP3 designation
   
 * 0.4 - 2015/03/15 - owagner

@@ -39,7 +39,7 @@ public class Main
 		return version;
 	}
 
-	public static void main(String[] args) throws MqttException, SecurityException, IOException, NumberFormatException, InterruptedException
+	public static void main(String[] args) throws MqttException, SecurityException, IOException, NumberFormatException
 	{
 		/*
 		 * Interpret all command line arguments as property definitions (without the knx2mqtt prefix)
