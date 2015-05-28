@@ -18,7 +18,7 @@ public class SyslogHandler extends Handler
 		}
 	}
 
-	private DatagramSocket ds;
+	private final DatagramSocket ds;
 	private String hostname;
 	private String pidSuffix;
 
@@ -42,6 +42,7 @@ public class SyslogHandler extends Handler
 		{
 			hostname=InetAddress.getLocalHost().getHostAddress();
 		}
+		/* Determining the PID will only work on Linux */
 		try
 		{
 			pidSuffix="["+new File("/proc/self").getCanonicalFile().getName()+"]";
@@ -88,8 +89,7 @@ public class SyslogHandler extends Handler
 		}
 		catch(IOException e)
 		{
-			ds.close();
-			ds=null;
+			/* Ignore */
 		}
 	}
 
