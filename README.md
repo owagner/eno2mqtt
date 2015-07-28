@@ -138,6 +138,10 @@ See also
   
 Changelog
 ---------
+* 0.6 - 2015/07/28 - owagner
+  - include timestamps ("ts") in generated JSON objects
+  - updated minimal-json to 0.9.4 and eclipse-paho to 1.0.2
+
 * 0.5 - 2015/03/19 - owagner
   - now properly supports multiple ESP3 connections. Will filter duplicate messages within 500ms.
   - changed state handling: will now retry failed connections every 10 seconds. Will keep running

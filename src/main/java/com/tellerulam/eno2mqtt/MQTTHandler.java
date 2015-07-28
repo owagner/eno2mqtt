@@ -152,6 +152,7 @@ public class MQTTHandler
 			jso.add("val",((Float)val).floatValue());
 		else
 			jso.add("val",val.toString());
+		jso.add("ts",System.currentTimeMillis());
 		jso.add("eno_srcid",src);
 		jso.add("eno_dbm",-dbm);
 		String txtmsg=jso.toString();
