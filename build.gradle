@@ -16,7 +16,7 @@ repositories {
 dependencies {
 	compile 'com.eclipsesource.minimal-json:minimal-json:0.9.4'
 	compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.0.2'
-	compile 'org.bidib.com.neuronrobotics:nrjavaserial:3.9.3.1'
+	compile 'com.neuronrobotics:nrjavaserial:3.11.0'
 }
 
 task listJars << {

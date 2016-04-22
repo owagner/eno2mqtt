@@ -336,6 +336,8 @@ public abstract class ESP3Connector extends Thread
 			L.info(logPrefix+"Using serial port "+port);
 			serial=new NRSerialPort(port,57600);
 			serial.connect();
+            serial.getSerialPortInstance().disableReceiveTimeout();
+            serial.getSerialPortInstance().enableReceiveThreshold(1);
 			is=serial.getInputStream();
 			os=serial.getOutputStream();
 		}
